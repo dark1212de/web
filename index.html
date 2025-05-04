@@ -1,0 +1,1143 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سيرفر ريسبكت - SAMP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cairo', sans-serif;
+    }
+    
+    :root {
+      --gold: #D4AF37;
+      --gold-light: #F0D875;
+      --dark: #222;
+      --white: #fff;
+      --red: #e74c3c;
+      --red-dark: #c0392b;
+    }
+    
+    body {
+      background-color: #121212;
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+    
+    /* === HEADER === */
+    header {
+      padding: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+    
+    .logo {
+      width: 150px;
+      height: 70px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      cursor: pointer;
+      z-index: 101;
+    }
+    
+    .menu-btn span {
+      width: 100%;
+      height: 4px;
+      background-color: var(--gold);
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    .menu-btn.active span:nth-child(1) {
+      transform: translateY(13px) rotate(45deg);
+    }
+    
+    .menu-btn.active span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .menu-btn.active span:nth-child(3) {
+      transform: translateY(-13px) rotate(-45deg);
+    }
+    
+    /* === NAV MENU === */
+    .side-menu {
+      position: fixed;
+      right: -300px;
+      top: 0;
+      width: 300px;
+      height: 100vh;
+      background-color: rgba(25, 25, 25, 0.95);
+      z-index: 100;
+      transition: right 0.4s ease;
+      padding: 100px 30px;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+    }
+    
+    .side-menu.active {
+      right: 0;
+    }
+    
+    .side-menu ul {
+      list-style: none;
+    }
+    
+    .side-menu li {
+      margin-bottom: 25px;
+    }
+    
+    .side-menu a {
+      color: var(--white);
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: bold;
+      position: relative;
+      padding: 5px 10px;
+      display: block;
+      transition: all 0.3s ease;
+    }
+    
+    .side-menu a:hover {
+      color: var(--gold);
+      transform: translateX(-10px);
+    }
+    
+    .side-menu a::before {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background-color: var(--gold);
+      bottom: 0;
+      right: 0;
+      transition: width 0.3s ease;
+    }
+    
+    .side-menu a:hover::before {
+      width: 100%;
+    }
+    
+    /* === MAIN CONTENT === */
+    main {
+      min-height: 80vh;
+      padding: 40px 0;
+    }
+    
+    .page {
+      display: none;
+      animation: fadeIn 0.6s ease;
+    }
+    
+    .page.active {
+      display: block;
+    }
+    
+    /* === HOME PAGE === */
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .hero h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: var(--gold);
+      text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    }
+    
+    .hero p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .feature-card {
+      background-color: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+    }
+    
+    .feature-card h3 {
+      color: var(--gold);
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+    
+    .feature-card p {
+      line-height: 1.6;
+    }
+    
+    /* === APPLY PAGE === */
+    .apply-form {
+      max-width: 700px;
+      margin: 0 auto;
+      background-color: rgba(30, 30, 30, 0.8);
+      padding: 30px;
+      border-radius: 15px;
+      border: 2px solid var(--gold);
+    }
+    
+    .apply-form h2 {
+      text-align: center;
+      color: var(--gold);
+      margin-bottom: 30px;
+      font-size: 32px;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--gold);
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      color: var(--white);
+      font-size: 16px;
+    }
+    
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    button {
+      background-color: var(--gold);
+      color: var(--dark);
+      border: none;
+      padding: 12px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: block;
+      margin: 0 auto;
+    }
+    
+    button:hover {
+      background-color: var(--gold-light);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+    }
+    
+    /* === RULES PAGE === */
+    .rules-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .rules-container h2 {
+      text-align: center;
+      color: var(--gold);
+      margin-bottom: 40px;
+      font-size: 32px;
+    }
+    
+    .rules-list {
+      background-color: rgba(30, 30, 30, 0.8);
+      border: 2px solid var(--gold);
+      border-radius: 15px;
+      padding: 20px;
+    }
+    
+    .rule-item {
+      margin-bottom: 20px;
+    }
+    
+    .rule-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .rule-item h3 {
+      color: var(--gold);
+      font-size: 22px;
+      padding: 10px;
+      background-color: rgba(212, 175, 55, 0.1);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .rule-toggle {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--gold);
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .rule-content {
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .rule-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .rule-content ul {
+      list-style-type: none;
+      padding-right: 20px;
+      margin: 0;
+    }
+    
+    .rule-content li {
+      position: relative;
+      padding: 8px 30px 8px 0;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+      line-height: 1.6;
+    }
+    
+    .rule-content li:last-child {
+      border-bottom: none;
+    }
+    
+    .rule-content li::before {
+      content: "•";
+      position: absolute;
+      right: 5px;
+      color: var(--gold);
+      font-size: 18px;
+    }
+    
+    .rule-number {
+      font-weight: bold;
+      color: var(--gold);
+      margin-left: 5px;
+    }
+    
+    .rule-category-icon {
+      margin-left: 10px;
+      font-size: 18px;
+      color: var(--gold);
+    }
+    
+    /* === CONTENT CREATORS PAGE === */
+    .creators-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .creators-container h2 {
+      text-align: center;
+      color: var(--gold);
+      margin-bottom: 40px;
+      font-size: 32px;
+    }
+    
+    .creators-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 30px;
+    }
+    
+    .creator-card {
+      background-color: rgba(30, 30, 30, 0.8);
+      border: 2px solid var(--gold);
+      border-radius: 15px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    
+    .creator-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+    }
+    
+    .creator-img {
+      width: 120px;
+      height: 120px;
+      background-color: #555;
+      border-radius: 50%;
+      margin: 30px auto 20px;
+      border: 3px solid var(--gold);
+    }
+    
+    .creator-info {
+      text-align: center;
+      padding: 0 20px 30px;
+    }
+    
+    .creator-info h3 {
+      color: var(--gold);
+      margin-bottom: 10px;
+      font-size: 22px;
+    }
+    
+    .creator-info p {
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .social-links a {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      background-color: var(--gold);
+      border-radius: 50%;
+      color: var(--dark);
+      line-height: 40px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .social-links a:hover {
+      transform: scale(1.2);
+      background-color: var(--gold-light);
+    }
+    
+    /* === FOOTER === */
+    footer {
+      background-color: rgba(25, 25, 25, 0.8);
+      padding: 30px 0;
+      text-align: center;
+      border-top: 2px solid var(--gold);
+    }
+    
+    footer p {
+      color: var(--gold);
+      font-weight: bold;
+    }
+    
+    /* === ANIMATIONS === */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* === NEW ADDITIONS === */
+    .warning-box {
+      background-color: var(--red);
+      color: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 30px auto;
+      text-align: center;
+      font-weight: bold;
+      max-width: 800px;
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+      }
+    }
+    
+    .rules-box {
+      background-color: rgba(30, 30, 30, 0.8);
+      border: 2px solid var(--gold);
+      border-radius: 15px;
+      padding: 25px;
+      margin: 30px auto;
+      max-width: 800px;
+    }
+    
+    .rules-box h3 {
+      color: var(--gold);
+      font-size: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+    }
+    
+    .rules-box p {
+      line-height: 1.8;
+      margin-bottom: 15px;
+    }
+    
+    .rules-box p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .status-info {
+      background-color: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 800px;
+      text-align: center;
+    }
+    
+    /* === RESPONSIVE DESIGN === */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 36px;
+      }
+      
+      .feature-card {
+        padding: 20px;
+      }
+      
+      .creators-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+      
+      .warning-box,
+      .rules-box,
+      .status-info {
+        padding: 15px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .hero h1 {
+        font-size: 28px;
+      }
+      
+      .hero p {
+        font-size: 16px;
+      }
+      
+      .feature-card h3 {
+        font-size: 20px;
+      }
+      
+      .apply-form h2,
+      .rules-container h2,
+      .creators-container h2,
+      .rules-box h3 {
+        font-size: 26px;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="logo"><img src="https://media.discordapp.net/attachments/1354073681659433001/1368616132021321940/abae342734ff00c7.webp?ex=6818de99&is=68178d19&hm=8c113472eadbec15f8b95285df9576c249f921dcfb5327867164aaede3dd6dfc&=&format=webp&width=395&height=395" alt="شعار ريسبكت" style="max-width: 100%; max-height: 100%; border-radius: 8px;"></div>
+    </header>
+    
+    <nav class="side-menu">
+      <ul>
+        <li><a href="#" data-page="home">الصفحة الرئيسية</a></li>
+        <li><a href="#" data-page="apply">تقديم التفعيل</a></li>
+        <li><a href="#" data-page="rules">القوانين</a></li>
+      </ul>
+    </nav>
+    
+    <main>
+      <!-- الصفحة الرئيسية -->
+      <section id="home" class="page active">
+        <div class="hero">
+          <h1>Respect</h1>
+          <p>حياكم الله في سيرفر ريسبكت المتخصص في الرول بلاي نحاول جاهدين تقديم افضل تجربه للرول بلاي في الشرق الاوسط انضم الينا الان و عيش حياتك كما تريد</p>
+        </div>
+       
+        
+        <!-- مربع قوانين التفعيل -->
+        <div class="rules-box">
+          <h3>قوانين تفعيل ريسبكت</h3>
+          <p>- يجب ان لا يقل عمرك عن 16 عام ويجب عليك ان تحضر اي ادلة على ان عمرك 16 فما فوق</p>
+          <p>- ستلتزم باحترام المشرف الذي استلم تفعيلك</p>
+          <p>- يجب عليك التقديم للتفعيل عبر الموقع الالكتروني لكي يتم قبولك</p>
+          <p>- ليس لديك سوابق سيئه في السيرفر</p>
+          <p>- يمنع تفعيلك اذا كنت في مواقع التواصل الاجتماعي متشمكل مع اي سيرفر ثاني</p>
+          <p>- يجب عليك ان ترسم سناريو شخصيتك</p>
+          <p>- يحب ان يكون لديك مايك جيد و واضح</p>
+        </div>
+        
+<!-- مربع التحذير الأحمر -->
+        <div class="warning-box">
+          <h3>⚠️ تنبيه هام ⚠️</h3>
+          <p>!!يمنع التقديم اكثر من مره سيتم اعطائك بلاك لست من التفعيل!!</p>
+        </div>
+
+        <!-- مربع معلومات الحالة بعد التقديم -->
+        <div class="status-info">
+          <h3>بعد التقديم</h3>
+          <p>سيتم اعطائك رتبه معينه في حال لم تجتاز الاختبار لن تاتيك الرتبه</p>
+          <p>في حال نجحت في الاختبار سيتم اعطائك رتبة "قدم الاختبار الالكتروني"</p>
+        </div>
+        
+        <div class="features">
+          <div class="feature-card">
+            <h3>القوانين</h3>
+            <p> تهدف القوانين إلى الحصول على المتعة والاحترام بين اللاعبين، مع تنظيم سريان اللعبة بطريقة عادلة وممتعه ، يمكنكم زيارة القوانين عبر الضغط على الثلاث خطوط و اختيار القوانين</p>
+          </div>
+          
+          <div class="feature-card">
+            <h3> التواصل معنا</h3>
+            <p> يمكنك التواصل معنا عن طريق جميع منصات التواصل الاجتماعي سواء الدسكورد او التويتر</p>
+          </div>
+          
+          <div class="feature-card">
+            <h3>من نحن</h3>
+            <p>ريسبكت هو سيرفر قراند اونلاين لجميع الاجهزة مخصص للاعبين العرب، تأسس في عام 2021 بهدف تقديم تجربة لعب استثنائية ومختلفة جذريا.</p>
+          </div>
+        </div>
+      </section>
+      
+<!-- صفحة التقديم مع التعديلات -->
+<section id="apply" class="page">
+  <div class="apply-form">
+    <h2> تفعيل ريسبكت </h2>
+    <form id="application-form">
+      <div class="form-group">
+        <label for="name">الاسم والعمر و من وين</label>
+        <input type="text" id="name" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="discord">يوزر او ايدي حسابك الديسكورد</label>
+        <input type="text" id="discord" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="story">اسم وعمر شخصيتك الخيالية ثم اكتب قصة واقعية ذاكرة فيها ايجابيات وسلبيات شخصيتك والمدينة [السيرفر] الذي جئت منه ... حيث تكون نهاية القصة هي دخولك الى ريسبكت</label>
+        <textarea id="story" required></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="situation1">اذا كنت تقود مركبه وتعطلت وسط الطريق وكان لديك عدة تصليح, بينما كنت خارج من المركبة لتصليحها جاء شخص ورفع السلاح عليك وهددك, ماذا تفعل ولماذا ؟</label>
+        <textarea id="situation1" required></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="why">اذا اردت سرقة محل أو مصرف وذهبت للبحث عن رهينة, فوجدت رهينة وخطفتها ثم علمت أن الرهينة ذو سلطة في المدينة سواء اجرامية او قانونية, ماذا تفعل ولماذا ؟</label>
+        <textarea id="why" required></textarea>
+      </div>
+      
+      <button type="submit"> تقديم </button>
+    </form>
+  </div>
+</section>
+      
+      <!-- صفحة القوانين -->
+      <section id="rules" class="page">
+        <div class="rules-container">
+          <h2>قوانين السيرفر</h2>
+        <p class="page-subtitle">Resspect Mangmant</p>
+          <div class="rules-list">
+            <div class="rule-item">
+              <h3><span class="rule-category-icon">⚠️</span> قوانين الحياة الجديدة (NLR):</h3>
+              <div class="rule-content">
+                <ul>
+                  <li>إذا فقدت وعيك تمامًا، لا يمكنك التحدث أو التحرك أو القيام بأي تصرف.</li>
+                  <li>إذا تم إنعاشك من قبل المسعفين بعد أن أسقطك شخص ما، يمكنك تذكر كل ما حدث.</li>
+                  <li>إذا تم حرق جثتك، لا يمكنك تذكر أي شيء من الأحداث السابقة، بما في ذلك العداوات أو السيناريوهات.</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="rule-item">
+              <h3><span class="rule-category-icon">💯</span> قانون تقدير الحياة (NWL)</h3>
+              <div class="rule-content">
+                <ul>
+                  <li>يجب أن تحافظ على حياتك وحياة الآخرين، ولا تتصرف بتهور.</li>
+                  <li>لا تستهين بقتل الأشخاص، ولا تقاوم المجرمين أو الشرطة أو أي شخص مسلح خصوصاً إذا كنت أعزل.</li>
+                  <li>يجوز الدفاع عن النفس فقط إذا لم يكن هناك إمكانية لطلب المساعدة من الشرطة.</li>
+                  <li>يجب التفاوض ومحاورة الطرف الآخر قبل القيام بأي تصرف قد يعرض حياة الآخرين للخطر.</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="rule-item">
+              <h3><span class="rule-category-icon">🚫</span> القتل العشوائي (RDM)</h3>
+              <div class="rule-content">
+                <ul>
+                  <li>يُمنع قتل الأشخاص بدون سبب واضح، أو تهديد، أو وجود عداوة سابقة.</li>
+                  <li>القتل بدون مبرر يعتبر مخالفة صريحة لقوانين السيرفر.</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="rule-item">
+              <h3><span class="rule-category-icon">🎮</span> الميتا جيمنج (Metagaming)</h3>
+              <div class="rule-content">
+                <ul>
+                  <li>يُمنع استخدام أي معلومات حصلت عليها من خارج اللعبة مثل: البث المباشر، الديسكورد، أو مقاطع اليوتيوب.</li>
+                  <li>هذه المعلومات تعتبر غير شرعية وتخالف قواعد اللعب.</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="rule-item">
+              <h3><span class="rule-category-icon">❤️</span> الخوف على الحياة (NVL)</h3>
+              <div class="rule-content">
+                <ul>
+                  <li>يجب أن تتصرف وكأنك تقدر حياتك فعلاً عند التهديد بالسلاح أو الوسائل الخطرة الأخرى.</li>
+                  <li>التصرف بعدم واقعية أو تجاهل الخطر يعتبر مخالف.</li>
+                  <li>مثال: يجب أن تظهر الخوف إذا تم تهديدك بسلاح أو أي أداة تهدد حياتك.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="rule-item">
+              <h3><span class="rule-category-icon">📜</span> القوانين العامة</h3>
+              <div class="rule-content">
+                <ul>
+                  <li><span class="rule-number">1.</span> <strong>استخدام الشخصيات:</strong> لا يُسمح باستخدام شخصية افتراضية إلا من خلال المتجر.</li>
+                  
+                  <li><span class="rule-number">2.</span> <strong>أسماء الشخصيات:</strong> يُمنع استخدام رموز أو أسماء شخصيات مشهورة أو أسماء غير مناسبة مثل: (W_0) أو (بابلو اسكوبار) أو (أبو محمد).</li>
+                  
+                  <li><span class="rule-number">3.</span> <strong>الشخصيات المزدوجة:</strong> يمكنك امتلاك شخصية إجرامية، ولكن الشخصية الثانية يجب أن تكون في جهة حكومية.</li>
+                  
+                  <li><span class="rule-number">4.</span> <strong>الستريم سنايب:</strong> يمنع تمامًا متابعة البثوث أثناء اللعب، والعقوبة شديدة.</li>
+                  
+                  <li><span class="rule-number">5.</span> <strong>التواصل الخارجي:</strong> يُمنع التواصل الخارجي بين اللاعبين، مثل الديسكورد، نهائيًا.</li>
+                  
+                  <li><span class="rule-number">6.</span> <strong>الاعتداء على البوتات:</strong> يُمنع ضرب أو الاعتداء على البوتات، ويجب اعتبارهم كمواطنين داخل اللعبة.</li>
+                  
+                  <li><span class="rule-number">7.</span> <strong>طلب التعويض:</strong> لا يمكنك طلب تعويض إذا فقدت مالك أو أغراضك بسبب التحلل أو الذهاب إلى المستشفى.</li>
+                  
+                  <li><span class="rule-number">8.</span> <strong>تويتر داخل اللعبة:</strong> يُمنع كتابة أي شيء خارج نطاق الرول بلاي في تطبيق تويتر داخل اللعبة.</li>
+                  
+                  <li><span class="rule-number">9.</span> <strong>الدخول في السيناريوهات:</strong> لا يُسمح بالدخول في سيناريو مع شخص دون معرفة مسبقة في الرول بلاي لا تقل عن 3 أيام.</li>
+                  
+                  <li><span class="rule-number">10.</span> <strong>السب والقذف والطائفية:</strong> يُمنع تمامًا استخدام الألفاظ البذيئة أو الطائفية أو السياسية أو الدينية أو القبلية، وقد يؤدي إلى حظر نهائي بدون تنبيه.</li>
+                  
+                  <li><span class="rule-number">11.</span> <strong>الكلام الغير مفهوم:</strong> يُمنع استخدام كلمات مبهمة أو مشفرة أو التلميح أو السب غير المباشر.</li>
+                  
+                  <li><span class="rule-number">12.</span> <strong>استغلال الخدمات:</strong> يُمنع طلب خدمات الجوال بغرض القتل أو الخطف أو السرقة أو أي غرض غير مشروع.</li>
+                  
+                  <li><span class="rule-number">13.</span> <strong>توزيع الأموال:</strong> يمنع توزيع مبالغ كبيرة (10 آلاف فأكثر) بين اللاعبين إلا إذا كانت هناك معرفة لمدة 3 أيام على الأقل.</li>
+                  
+                  <li><span class="rule-number">14.</span> <strong>القتل أثناء تنفيذ الأوامر:</strong> يُمنع قتل أي شخص ينفذ الأوامر أو بحجة "النسيان".</li>
+                  
+                  <li><span class="rule-number">15.</span> <strong>مشاركة الحسابات:</strong> مشاركة حساباتك (Google – Rockstar – SAMP – Discord) مع الآخرين تعرّض الجميع لحظر نهائي.</li>
+                  
+                  <li><span class="rule-number">16.</span> <strong>حمل شخصين:</strong> يمنع حمل شخص وسحبه في نفس الوقت مهما كانت الأسباب.</li>
+                  
+                  <li><span class="rule-number">17.</span> <strong>القيادة غير الواقعية:</strong> القيادة بسرعة أو بتهور أو قطع الإشارات دون سبب تعتبر مخالفة تحت "PowerGaming"، وقد تؤدي لتحذير أو باند.</li>
+                  
+                  <li><span class="rule-number">18.</span> <strong>صلاحيات الرقابة:</strong> الرقابة تملك الحق في محاسبة اللاعبين حتى على الأخطاء غير المذكورة في القوانين.</li>
+      </ul>
+    </div>
+  </div>
+
+          <div class="rule-item">
+             <h3><span class="rule-category-icon">👮‍♂️</span> قوانين الشرطة </h3>
+              <div class="rule-content">
+                <ul>
+                  <li><span class="rule-number">1.</span> <strong> 🔳 يجب أن يكون رجل الأمن مهذب تجاه المواطنين ومع زملائهم , يجب أن يكون لبقاً في أداء واجبه، متحكم في اعصابه ويتحمل أقصى درجات الصبر وتقدير. حتى في مواجهة الاستفزاز الشديد. لا يجوز لهم استخدامها </strong>
+                  
+                  <li><span class="rule-number">2.</span> <strong> لغة أو إيماءات بذيئة أو عنيفة أو بذيئة تجاه المواطنين أو زملائه في شرطة ريسبكت. </strong>
+                  
+                  <li><span class="rule-number">3.</span> <strong>  ⬜ لا يجوز لرجال الأمن ارتكاب أي عمل من أعمال الفساد. وعليهم أيضا معارضة ومكافحة كل هذه الأعمال بصرامة و الإبلاغ عنها. </strong>
+                  
+                  <li><span class="rule-number">4.</span> <strong> :⬜: يجب على رجال الأمن تطبيق القانون ، في أدائهم لواجبهم ، احترام وحماية كرامة الإنسان والحفاظ على حقوق الإنسان لجميع الأشخاص ودعمها. </strong>
+                  
+                  <li><span class="rule-number">5.</span> <strong>  ⬜ لا يجوز لرجال الأمن استخدام القوة الإجبارية إلا عند الضرورة القصوى او عند الاعتداء عليه بالضرر وتكون بالقدر المطلوب لأداء واجبهم. </strong>
+                  
+                  <li><span class="rule-number">6.</span> <strong> ⬜: يمكن لرجل الأمن ممارسة عمله و تطبيق القانون كلما اقتضت الظروف ذلك ، سواء أكان بالزي الرسمي أو حتى وهو خارج الدوام. </strong>
+                  
+                  <li><span class="rule-number">7.</span> <strong> :⬜: يجب الحفاظ على سرية الأمور العسكرية ذات الطبيعة السرية التي في متناول رجل الأمن عن تطبيق القانون ، ما لم يتطلب أداء الواجب أو متطلبات العدالة خلاف ذلك بشكل صارم.
+</strong>
+                  
+                  <li><span class="rule-number">8.</span> <strong>  :🔳يجب على رجال الأمن ضمان الحماية الكاملة لصحة الأشخاص المحتجزين لديهم ،و يجب عليهم اتخاذ إجراءات فورية لتأمين العناية الطبية عند الاقتضاء. </strong>
+                  
+                  <li><span class="rule-number">9.</span> <strong>  🔴 تعتبر الخيانة او التمرد انهيارًا خطيرًا في الانضباط والنظام داخل حكومة ريسبكت. لذلك ،، فإن أي رجل امن يكون متمردًا تجاه حكومة ريسبكت يخضع لإجراءات تأديبية قد تؤدي إلى إنهاء الخدمة أو الإعدام بالرصاص. </strong>
+                  
+                  <li><span class="rule-number">10.</span> <strong> 🔴 يشمل التمرد او الخيانة ما يلي </strong>
+                  
+                  <li><span class="rule-number">11.</span> <strong> 🔳 لغة وقحة أو مسيئة أو أفعال تجاه الضابط المشرف أو غيره عضو معين للقيادة . </strong>
+                  
+                  <li><span class="rule-number">12.</span> <strong> 🔳 الإخفاق أو الرفض المتعمد للامتثال لأمر قانوني صادر عن هذا الضابط أو من القيادات . </strong>
+                  
+                  <li><span class="rule-number">13.</span> <strong> 🔳 السخرية من أوامر عضو معين في القيادة أو الضابط المشرف سواء بحضورهم او غيابهم . </strong>
+                  
+                  <li><span class="rule-number">14.</span> <strong> 🔳 لا يجوز لرجال الأمن ، في أي وقت ، عدم احترام رئيسهم بأي طريقة كانت. </strong>
+                  
+      </ul>
+    </div>
+  </div>
+
+<div class="rule-item">
+             <h3><span class="rule-category-icon">🏥</span> قوانين الصحة </h3>
+              <div class="rule-content">
+                <ul>
+                  <li><span class="rule-number">1.</span> <strong> 🔴 يمنع لموظفين وزارة الصحة الدخول الى منطقة سيناريو الا بعد انتهاء السيناريو وقد لا يتم تطبيق هاذا القانون باسباب يحددها الامن الوطني </strong>
+                  
+                  <li><span class="rule-number">2.</span> <strong>  🔴 يمنع لموظفين وزارة الصحة استخدام سيارات غير تابعة للوزارة في حالة لم تكن بإجازة </strong>
+                  
+                  <li><span class="rule-number">3.</span> <strong> 🔴 يمنع لموظفين وزارة الصحة بالقتل او التلويت داخل المدينة او بالخارج </strong>
+                  
+                  <li><span class="rule-number">4.</span> <strong> 🔴 يمنع استخدام الراديو لأغراض اخرى غير متعلقة بأمور الصحة </strong>
+                  
+                  <li><span class="rule-number">5.</span> <strong> 🔴 يمنع تزويد أي احد بال PainKiller بدون تصريح موثوق من الوزير </strong>
+                  
+                  <li><span class="rule-number">6.</span> <strong> 🔴 يمنع تكون داخل عصابة أو منظمة </strong>
+                  
+                  <li><span class="rule-number">7.</span> <strong> 🔴 يمنع التعامل مع المجرمين أو المنظمات الإرهابية </strong>
+                  
+                  <li><span class="rule-number">8.</span> <strong> 🟢 مسموح لوزارة الصحة باحتجاز مجرم داخل المستشفى بعد معالجته في حال قامت احد الوزارات بطلب ذالك </strong>
+                  
+                  <li><span class="rule-number">9.</span> <strong>  🟢 يمنع لموظفين وزارة الصحة لبس ملابس غير تابعة للوزارة في حالة لم تكن بإجازة </strong>
+                  
+                  <li><span class="rule-number">10.</span> <strong> 🟢 مسموح لافراد الصحة المشاركة بالسيناريوهات لمعالجة افراد الوزارة ولكن يمكن للعصابات قتلهم بالسيناريو وذالك يسموح لافراد الصحة المشاركة بالسيناريوهات لمعالجة افراد الوزارة </strong>
+       </ul>
+    </div>
+  </div>
+
+<div class="rule-item">
+             <h3><span class="rule-category-icon">🐱‍👤</span> قوانين العصابات </h3>
+              <div class="rule-content">
+                <ul>
+                  <li><span class="rule-number">1.</span> <strong> 🔴 تعتبر هذة القوانين خاصة بالعصابات ويجب على الجميع الالتزام بكل البنود مع الألتزام بجميع القوانين الخاصة بالسيرفر حيث تكون القوانين كامله مدمجه ومكمله لبعضها </strong>
+                  
+                  <li><span class="rule-number">2.</span> <strong>  🔴 يمنع منعا باتا التواجد في اي ديسكورد للعصابات غير الديسكورد الرسمي لـ المدينة ريسبكت واذا تم رصدك فى اي ديسكورد اخر سيتم محاسبتك رقابياً </strong>
+                  
+                  <li><span class="rule-number">3.</span> <strong>   ⚪ التقديم على طلب تكوين اجرامي او الترقيه لـ مستوى اخر لا يعني القبول من الممكن التأجيل او الالغاء لـ الطلب فرجاء الانتظار لحين الرد عليك فى التذكره </strong>
+                  
+                  <li><span class="rule-number">4.</span> <strong>  🔴 لا يمكن للعصابات الاتحاد في الفايت او العداوة مع عصابة اخرى سواء مع عصابة او مع الشرطة </strong>
+                  
+                  <li><span class="rule-number">5.</span> <strong> 🔴 لا يمكن ان يتم اعلان العداوه او حرب العصابة الا من خلال تأكيد بين قائده العصابتين </strong>
+                  
+                  <li><span class="rule-number">6.</span> <strong>  🟢 في حال وقع فايت بين عصابتين في مكان مأهول بالسكن يحق للشرطة التدخل بشكل مباشر و اذا كان في مكان نائي يحق للشرطة التدخل بشكل غير مباشر </strong>
+                  
+                  <li><span class="rule-number">7.</span> <strong> 🔴 لا تتكون عداوة بين عصابتين بسبب خطف احد اعضائها الا اذا كانت عصابة ذات سلطة اجرامية او اذا كان المخطوف هو قائد العصابة </strong>
+                  
+                  <li><span class="rule-number">8.</span> <strong> 🔴 لا يمكن الاتفاق على اى حدث بين اي عصابتين الا من خلال الموافقه الكاملة من مسئول العصابات او النائب </strong>
+                  
+                  <li><span class="rule-number">9.</span> <strong>  🟢 عند وجود اى تعدي من افراد العصابة على قوانين العصابات سيتم اتخاذ العقوبات اللازمه مع العصابة  </strong>
+                  
+                  <li><span class="rule-number">10.</span> <strong> 🔴 يمنع استقطاب أعضاء العصابة بشكل عشوائي ويجب ان يوجد ثقة مبنية داخل الرول بلاي </strong>
+                  
+                  <li><span class="rule-number">11.</span> <strong>  🟢 يجب الالتزام بالقوانين العامة للسيرفر تجنبا للعقوبات  </strong>
+                  
+                  <li><span class="rule-number">12.</span> <strong>  🟢 قائد العصابة هو المسؤول الأول والاخير امام الإدارة في المخالفات الجماعية </strong>
+                  
+                  <li><span class="rule-number">13.</span> <strong> 🔴 تعطى العصابة تحذير او أكثر في حال مخالفة القوانين وعند التكرار قد تصل الى تصفير كامل العصابة  </strong>
+                  
+                  <li><span class="rule-number">14.</span> <strong>  🟢 تتكون العداوة بين عصابتين الا لأسباب مقنعة ويجب ان تكون مصورة </strong>
+
+                  <li><span class="rule-number">14.</span> <strong> 🔴 في حال عدم التواجد او التفاعل في اى عصابه من العصابات المتاحة سيتم تصفير العصابه بدون الرجوع الى البوس </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>  🔴 عدد التحذيرات لتصفير العصابه 3 تحذيرات فقط </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>  🔴 لن يتم الغاء تحذير العصابه الا بعد شهر من اخذ التحذير </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>  🔴 في حال أخذت العصابة تحذيرين سيتم مضاعفة مدة التحذيرات على العصابة </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>   🟢 يحق لمسؤول العصابات تعديل او حذف او اضافة القوانين في اى وقت ويجب مراجعة القوانين من حين لاخر </strong>
+
+      </ul>
+    </div>
+  </div>
+
+<div class="rule-item">
+             <h3><span class="rule-category-icon">🦹‍♂️</span> قوانين الاجرام  </h3>
+              <div class="rule-content">
+                <ul>
+                  <li><span class="rule-number">1.</span> <strong>  🔴 ممنوع ملاحقة العساكر بغرض محاولة المضايقات اوالتدخل بعملهم او الترصد و بناء عداوة معهم. </strong>
+                  
+                  <li><span class="rule-number">2.</span> <strong>  🔴 يمنع منعاً باتاً التحلل او الخروج من المدينة نهائياً الأ بعد 10 دقايق من بعد انتهاء السناريو. </strong>
+                  
+                  <li><span class="rule-number">3.</span> <strong>   🔴 ممنوع الدخول فى اى سناريو الا اذا كانت بينكم معرفه في الرول بلاي لمدة لا تقل عن اسبوع. </strong>
+                  
+                  <li><span class="rule-number">4.</span> <strong>   🔴 يمنع طلب الخدمات المتاحة بالجوال بقصد الخطف أو القتل أو السرقة أو بغير الاستفادة من الخدمة. </strong>
+                  
+                  <li><span class="rule-number">5.</span> <strong>  ⚪ في حال رفع عليك شخص سلاح ناري او سلاح ابيض يجب عليك ان تستلم بشكل كامل للشخص. و ان كان هناك اي مخالفه في السناريو يجب عليك مجارتها في الاحداث و ان تستكمل السناريو حتى النهايه. </strong>
+                  
+                  <li><span class="rule-number">6.</span> <strong>  🟢 النشاط الاجرامي يقتصر على 6 اشخاص فقط شامل التدخل الخارجي ضد العسكر. </strong>
+                  
+                  <li><span class="rule-number">7.</span> <strong>  🔴 يمنع انك تخطف شخص في مكان عام او غيرها من الاماكن -يجب عليك سحب الشخص الى مكان خالي من الاشخاص و تتغاضى عن الانظار و بعدها تستطيع خطف الشخص. </strong>
+                  
+                  <li><span class="rule-number">8.</span> <strong>  🔴 يمنع ان تاخذ احد معارفك سواءً كنت في عصابه او زملاء كرهينة يجب عليك اخذ رهينة ليس بينك وبينها معرفه. </strong>
+                  
+                  <li><span class="rule-number">9.</span> <strong>   🔴 ممنوع منعاً باتاً ‌ ‌قتل‌ ‌الأشخاص‌ ‌في‌ ‌حال‌ ‌كانوا‌ ‌ينفذون‌ ‌الاوامر‌ ‌او‌ ‌بحجة‌ ‌النسيان.  </strong>
+                  
+                  <li><span class="rule-number">10.</span> <strong>  🟢 يسمح لك السرقه في الاماكن المشبوه مثل بيع المخدرات او الجزيره او مكان بيع الممنوعات و غيرها من الاماكن المشبوه بعد تهديد الاشخاص. </strong>
+                  
+                  <li><span class="rule-number">11.</span> <strong> 🔴 ممنوع تسرق وتهرب على طول، لازم تنتظر الشرطة على الأقل 10 دقائق.  </strong>
+                  
+                  <li><span class="rule-number">12.</span> <strong>   🔴 يمنع تلويت العساكر أو أخذ عتادهم الا في حال هجموا على مقركم </strong>
+                  
+                  <li><span class="rule-number">13.</span> <strong> 🔴 في حال اسقطت عسكري او مجرم سواءً كنت في سناريو سرقه او غيرها يمنع انك تنقل العسكري او المجرمين للمستشفى بعد انتهاء الفايت الا اذا كان الشخص في عصابتك او مجموعتك.  </strong>
+                  
+                  <li><span class="rule-number">14.</span> <strong>   🔴 عند تبادل اطلاق النار بين طرفين يمنع انك تكون حامل شخص بيدك خلال اطلاق النار يجب انزال الشخص و بعدها تستطيع ان تتبادل اطلاق النار.  </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>  🔴 ممنوع اعطاء اي من المعلومات الاجرامية او اي شئ يخص الاجرام بشكل كامل للغرباء الا بعد معرفه تتجاوز اسبوع كامل. </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>  🟢 يحق لك سرقة المواطن فقط في حال وجود عداوة بينك وبينه. </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>  🔴 يمنع تكوين عداوة على اسباب تافه مثال ( الضرب بالايدي بسبب مشادة كلامية - او شخص صدمك بالمركبه و هرب - خطف لاجل السرقة - الخ...). </strong>
+
+                  <li><span class="rule-number">14.</span> <strong> 🟢 يحق للمواطن سرقة العسكري في اذا كان هناك سناريو سرقة البنوك والمجوهرات والمراكز العسكرية كالميناء والمقرات ولا يشمل سرقة المحلات.</strong>
+
+                  <li><span class="rule-number">14.</span> <strong>   🔴 عدم بناء العداوة بسبب العسكري كان يؤدي وظيفته. </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>  🟢 في حال تمت مداهمة حارة عصابة من قبل الشرطة يحق للعصابة سرقة العساكر في مكان الحارة. </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>   🔴 يمنع الخطف في شارع عام او امام العلن او في مواقع عامة مثل الوظائف او المراكز او المستشفى، لذلك يجب عليك استدراج الشخص الى مكان منعزل او ممر ضيق بحيث يكون بعيد عن الانظار بشكل عام. </strong>
+
+                  <li><span class="rule-number">14.</span> <strong>   🟡 تحديد عدد اللاعبين للسرقة كحد اقصى : </strong>
+
+<li>  (سرقة منزل) عدد المجرمين | 2-4 عدد الشرطه | 5 </li>
+<li>  (سرقة الميناء) عدد المجرمين | 5 عدد الشرطه | 8 </li>
+<li> (سرقة شاحنة البنك) عدد المجرمين | 2-4 عدد الشرطه | 4-6 </li>
+<li> (سرقة محل اسلحة) عدد المجرمين | 4 عدد الشرطه | 6-8  </li>
+<li>  (سرقة البنك المركزي) عدد المجرمين | 6-10 عدد الشرطه | 8-12 </li>
+<li> (سرقة بنك فليكا) عدد المجرمين | 4-6 عدد الشرطه | 6-8 </li>
+<li> (سرقة محل مجوهرات) عدد المجرمين | 4-6 عدد الشرطه | 6-8 </li>
+<li>  (سرقة محل ملابس/سوبر ماركت/مطعم) عدد المجرمين | 1-4 عدد الشرطه | 4-6 </li>
+
+      </ul>
+    </div>
+  </div>
+
+<div class="rule-item">
+  <h3><span class="rule-category-icon">🐱‍👤</span> فئات العصابات والمتطلبات </h3>
+  <div class="rule-content">
+    <ul>
+      <li><span class="rule-number">1.</span> <strong>🟢 التكوين الإجرامي</strong><br>
+        - عدد الأعضاء: من 6 إلى 10 أشخاص<br>
+        - وجود سلاح واحد على الأقل<br>
+        - الاستيلاء على حارة<br>
+        - شخص واحد على الأقل يقوم بالتصنيع<br>
+        <br>
+        <strong>✅ المميزات:</strong><br>
+        • دخول حروب مع عصابات من نفس المستوى أو المستوى الثاني<br>
+        • السيطرة الكاملة على حارة واحدة<br>
+        • اختيار لبس ولون مميز للعصابة<br>
+        • إمكانية الترقية وفق الشروط<br>
+        • التأهل للمشاركة في أحداث المدينة<br>
+        <br>
+        <strong>🔴 القيود:</strong><br>
+        ✖ لا يمكن فرض أسعار أسلحة<br>
+        ✖ لا يمكن الاتحاد مع عصابات في السوق السوداء<br>
+        ✖ لا يمكن السيطرة على أماكن مشبوهة أو مدن<br>
+        ✖ لا يمكن بناء عداوة مع عصابات رسمية أو ذات سلطة<br>
+        <br>
+        <strong>📝 التقديم:</strong><br>
+        • يفتح البوس فقط التذكرة<br>
+        • أسماء الأعضاء مع نسخ الآيدي<br>
+        • إثبات الملف الإجرامي (مثال: فيديو فيه سرقة ولبس العصابة)<br>
+        • تحديد البوس والكو بوس<br>
+        • قصة العصابة + صورة الحارة والمقر<br>
+        • تحديد من لديه خبرة في التصنيع
+      </li>
+
+      <li><span class="rule-number">2.</span> <strong>🟢 العصابة الرسمية</strong><br>
+        - عدد الأعضاء: من 12 إلى 20 شخص<br>
+        - مقر ومخزن للعصابة<br>
+        - السيطرة على الحارة + مجمع سكني<br>
+        - 3 أشخاص على الأقل للتصنيع<br>
+        - لبس موحد + لون موحد لا يُبنى عليه عداوة<br>
+        - 10 أعضاء دائمين<br>
+        - 15 سلاح خفيف، 7 ثقيلة<br>
+        - مشروع واحد على الأقل<br>
+        - 500,000 على الأقل في بنك العصابة<br>
+        - عدم وجود تحذيرات سابقة<br>
+        - ملف إجرامي مثبت في المدينة<br>
+        <br>
+        <strong>✅ المميزات:</strong><br>
+        • حرب مع عصابات من نفس المستوى أو التالي فقط<br>
+        • السيطرة الكاملة على الحارات والأماكن المشبوهة<br>
+        • اختيار لبس ولون محدد<br>
+        • الترقية حسب الشروط<br>
+        • التأهل لجميع أحداث المدينة<br>
+        • الاتحاد مع عصابات في السوق السوداء والموارد (ما عدا العداوة)<br>
+        • بناء عداوات مع أي عصابة<br>
+        • تحرك العصابة بالكامل في حال اختُطف البوس
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+
+
+</div>
+
+    </main>
+    
+    <footer>
+      <p>جميع الحقوق محفوظة &copy; سيرفر ريسبكت 2025</p>
+    </footer>
+  </div>
+  
+  <script>
+    // Toggle Menu
+    const menuBtn = document.querySelector('.menu-btn');
+    const sideMenu = document.querySelector('.side-menu');
+    
+    menuBtn.addEventListener('click', function() {
+      this.classList.toggle('active');
+      sideMenu.classList.toggle('active');
+    });
+    
+    // Page Navigation
+    const navLinks = document.querySelectorAll('.side-menu a');
+    const pages = document.querySelectorAll('.page');
+    
+    navLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Hide all pages
+        pages.forEach(page => {
+          page.classList.remove('active');
+        });
+        
+        // Show selected page
+        const pageId = this.getAttribute('data-page');
+        document.getElementById(pageId).classList.add('active');
+        
+        // Close menu on mobile
+        menuBtn.classList.remove('active');
+        sideMenu.classList.remove('active');
+      });
+    });
+    
+    // Toggle Rules
+    const ruleHeaders = document.querySelectorAll('.rule-item h3');
+    
+    ruleHeaders.forEach(header => {
+      header.addEventListener('click', function() {
+        this.classList.toggle('active');
+        const content = this.nextElementSibling;
+        content.classList.toggle('active');
+      });
+    });
+    
+// Handle form submission
+const applicationForm = document.getElementById('application-form');
+
+applicationForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  // Get form values
+  const name = document.getElementById('name').value;
+  const discord = document.getElementById('discord').value;
+  const story = document.getElementById('story').value;  // تم تغيير المعرف
+  const situation1 = document.getElementById('situation1').value;  // تم تغيير المعرف
+  const situation2 = document.getElementById('why').value;
+  
+  // Create message for Discord webhook
+  const message = {
+    content: '📝<@&1278077473816449045> **طلب تفعيل جديد**',
+    embeds: [{
+      title: 'معلومات المتقدم',
+      color: 0xD4AF37,
+      fields: [
+        { name: 'الاسم والعمر و من وين', value: name },
+        { name: 'يوزر او ايدي حسابك الديسكورد', value: discord },
+        { name: 'اسم وعمر شخصيتك الخيالية والقصة', value: story },
+        { name: 'السيناريو الأول (المركبة المعطلة)', value: situation1 },
+        { name: 'السيناريو الثاني (الرهينة)', value: situation2 }
+      ],
+      timestamp: new Date().toISOString()
+    }]
+  };
+  
+  try {
+    // رابط الويب هوك الخاص بك
+    const webhookURL = "https://discord.com/api/webhooks/1337531208523055106/0UGwxwW5-4Flt6TqeNC4gyJV5REGofri3bwoPI2D9tg6QlguU6hAeFIHYL2ocKZPdXPN";
+    
+    // إرسال البيانات للديسكورد
+    const response = await fetch(webhookURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message)
+    });
+    
+    if (response.ok) {
+      alert('تم إرسال طلبك بنجاح! سيتم مراجعته من قبل الإدارة قريباً.');
+      applicationForm.reset();
+      // توجيه المستخدم إلى الصفحة الرئيسية
+      document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+      });
+      document.getElementById('home').classList.add('active');
+    } else {
+      alert('حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى لاحقاً.');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى لاحقاً.');
+  }
+});
+  </script>
+</body>
+</html>
